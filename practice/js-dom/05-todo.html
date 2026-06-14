@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Todo</title>
+  </head>
+  <style>
+    :root {
+      /* Backgrounds */
+      --bg-primary: #ffffff;
+      --bg-secondary: #f3f4f6;
+
+      /* Text */
+      --text-primary: #111827;
+      --text-secondary: #6b7280;
+
+      /* Borders */
+      --border-color: #e5e7eb;
+
+      /* Status Colors */
+      --success: #10b981;
+
+      /* Optional */
+      --danger: #ef4444;
+      --warning: #f59e0b;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+
+      padding: 3rem 1rem;
+    }
+
+    #container {
+      width: 100%;
+      max-width: 700px;
+
+      background: var(--bg-primary);
+
+      padding: 2rem;
+      border-radius: 16px;
+
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1.3;
+
+      color: var(--text-primary);
+    }
+
+    #input-container {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    #todo-input {
+      flex: 1;
+
+      padding: 0.9rem 1rem;
+
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+
+      font-size: 1rem;
+
+      outline: none;
+    }
+
+    #todo-input:focus {
+      border-color: var(--success);
+    }
+
+    #add-btn {
+      border: none;
+      border-radius: 10px;
+
+      padding: 0.9rem 1.25rem;
+
+      background: var(--success);
+      color: white;
+
+      font-weight: 600;
+      cursor: pointer;
+
+      transition: 0.2s ease;
+    }
+
+    #add-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    #list {
+      list-style: none;
+
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    #list li {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      padding: 1rem;
+
+      background: var(--bg-secondary);
+
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+    }
+
+    #list li span {
+      flex: 1;
+      font-size: 1rem;
+      word-break: break-word;
+    }
+
+    #list li input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    #list li button {
+      border: none;
+      border-radius: 8px;
+
+      padding: 0.5rem 0.9rem;
+
+      cursor: pointer;
+      font-weight: 600;
+
+      transition: 0.2s ease;
+    }
+
+    #list li button:hover {
+      transform: translateY(-1px);
+    }
+
+    #list li button:first-of-type {
+      background: var(--warning);
+      color: white;
+    }
+
+    #list li button:last-of-type {
+      background: var(--danger);
+      color: white;
+    }
+
+    #list li input[type="text"] {
+      flex: 1;
+
+      padding: 0.6rem 0.8rem;
+
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+
+      font-size: 1rem;
+    }
+  </style>
+  <body>
+    <div id="container">
+      <h1>To Do Just For practice localStorage</h1>
+      <div id="input-container">
+        <input type="text" id="todo-input" placeholder="enter todo..." />
+        <button id="add-btn">Add</button>
+      </div>
+      <ul id="list"></ul>
+    </div>
+    <script>
+      const todoInput = document.getElementById("todo-input");
+      const addBtn = document.getElementById("add-btn");
+      const list = document.getElementById("list");
+
+      function getTodos() {
+        return JSON.parse(localStorage.getItem("todos")) || [];
+      }
+
+      function saveTodos(value) {
+        const todos = getTodos();
+        todos.unshift({ todo: value, isCompleted: false });
+        localStorage.setItem("todos", JSON.stringify(todos));
+      }
+
+      function deleteTodo(t) {
+        const todos = getTodos();
+        const index = todos.findIndex((todo) => {
+          todo === t;
+        });
+        todos.splice(index, 1);
+        localStorage.setItem("todos", JSON.stringify(todos));
+
+        renderTodos();
+      }
+
+      function updateTodo(oldT, newT) {
+        const todos = getTodos();
+        const index = todos.findIndex((todo) => todo.todo === oldT);
+        console.log(index, todos[index]);
+        todos.splice(index, 1, { ...todos[index], todo: newT });
+        localStorage.setItem("todos", JSON.stringify(todos));
+
+        renderTodos();
+      }
+
+      function renderTodos() {
+        const todos = getTodos();
+
+        list.innerHTML = "";
+
+        todos.forEach((todo, index, self) => {
+          const li = document.createElement("li");
+          const checkBox = document.createElement("input");
+          const span = document.createElement("span");
+          const editBtn = document.createElement("button");
+          const delBtn = document.createElement("button");
+
+          checkBox.type = "checkbox";
+          span.innerText = todo.todo;
+          editBtn.innerText = "Edit";
+          delBtn.innerText = "X";
+
+          li.appendChild(checkBox);
+          li.appendChild(span);
+          li.appendChild(editBtn);
+          li.appendChild(delBtn);
+
+          if (todo.isCompleted) {
+            span.style.textDecoration = "line-through";
+            checkBox.checked = true;
+            editBtn.style.display = "none";
+          } else {
+            editBtn.style.display = "inline";
+          }
+
+          list.appendChild(li);
+
+          checkBox.addEventListener("change", () => {
+            if (checkBox.checked) {
+              self[index] = { ...todo, isCompleted: true };
+              localStorage.setItem("todos", JSON.stringify(self));
+
+              renderTodos();
+            } else {
+              self[index] = { ...todo, isCompleted: false };
+              localStorage.setItem("todos", JSON.stringify(self));
+
+              renderTodos();
+            }
+          });
+
+          editBtn.addEventListener("click", () => {
+            const input = document.createElement("input");
+            const value = span.innerText;
+            input.value = value;
+
+            span.replaceWith(input);
+            editBtn.remove();
+            delBtn.remove();
+
+            const updateBtn = document.createElement("button");
+            updateBtn.innerText = "Update";
+            li.appendChild(updateBtn);
+            updateBtn.addEventListener("click", () => {
+              updateTodo(value, input.value);
+              updateBtn.remove();
+            });
+          });
+
+          delBtn.addEventListener("click", () => {
+            deleteTodo(todo);
+          });
+        });
+      }
+
+      addBtn.addEventListener("click", () => {
+        const value = todoInput.value.trim();
+        if (value.length === 0) {
+          return alert("Todo should not be empty");
+        }
+        saveTodos(value);
+
+        todoInput.value = "";
+        renderTodos();
+      });
+
+      renderTodos();
+    </script>
+  </body>
+</html>

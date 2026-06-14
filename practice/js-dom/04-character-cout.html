@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Character Count</title>
+  </head>
+  <body>
+    <div id="container">
+      <textarea
+        id="text-input"
+        style="width: 350px; height: 70px"
+        placeholder="write something..."
+      ></textarea>
+      <p>Character: <span id="count">0</span></p>
+      <p>Remaining: <span id="remaining"></span></p>
+      <button id="submit">Submit</button>
+    </div>
+
+    <script>
+      const textAreaInput = document.getElementById("text-input");
+      const totalChar = document.getElementById("count");
+      const remainingChar = document.getElementById("remaining");
+      const submitBtn = document.getElementById("submit");
+
+      const maxChar = 10;
+      textAreaInput.addEventListener("input", () => {
+        let charCount = textAreaInput.value.length;
+        totalChar.innerText = charCount;
+        remainingChar.innerText = maxChar - charCount;
+        if (charCount > maxChar) {
+          remainingChar.style.color = "red";
+          submitBtn.disabled = true;
+        } else {
+          submitBtn.disabled = false;
+          remainingChar.style.color = "black";
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Digital Clock</title>
+  </head>
+  <body>
+    <div id="container">
+      <h1 id="timer"></h1>
+    </div>
+    <script>
+      const h1 = document.getElementById("timer");
+      setInterval(() => {
+        h1.innerText = new Date().toLocaleTimeString();
+      }, 1 * 1000);
+    </script>
+  </body>
+</html>

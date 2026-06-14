@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Color Changer</title>
+  </head>
+  <body>
+    <div id="container">
+      <button id="generate">Generate Color</button>
+      <h1>Current Color: <span id="color">color</span></h1>
+    </div>
+    <script>
+      const generateBtn = document.getElementById("generate");
+      const color = document.getElementById("color");
+      const body = document.getElementsByTagName("body");
+
+      function randomColor() {
+        const min = 0,
+          max = 255;
+        const r = Math.floor(Math.random() * max);
+        const g = Math.floor(Math.random() * max);
+        const b = Math.floor(Math.random() * max);
+
+        const hex =
+          "#" +
+          [r, g, b]
+            .map((c) => c.toString(16))
+            .join("")
+            .padStart(6, "0");
+
+        document.body.style.backgroundColor = hex;
+
+        color.innerText = hex;
+      }
+      generateBtn.addEventListener("click", randomColor);
+      randomColor();
+    </script>
+  </body>
+</html>
