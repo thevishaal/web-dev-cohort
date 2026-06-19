@@ -6,13 +6,14 @@ import LoginDto from "./dto/login.dto.js";
 import ForgotPasswordDto from "./dto/forgotPassword.dto.js";
 import ResetPasswordDto from "./dto/resetPassword.dto.js";
 import { authenticate } from "./user.middleware.js";
+import ChangePasswordDto from "./dto/changePassword.dto.js";
 
 const router = Router();
 
 router.post("/register", validate(RegisterDto), controller.register);
 router.get("/verify/:token", controller.verifyEmail);
 router.post("/login", validate(LoginDto), controller.login);
-router.get("/refresh", controller.refresh);
+router.get("/refresh-token", controller.refreshToken);
 router.post(
   "/forgot-password",
   validate(ForgotPasswordDto),
@@ -24,6 +25,12 @@ router.post(
   controller.resetPassword,
 );
 router.post("/logout", authenticate, controller.logout);
-router.get("/getMe", authenticate, controller.getMe);
+router.get("/me", authenticate(), controller.getMe);
+router.post(
+  "/change-password",
+  authenticate(),
+  validate(ChangePasswordDto),
+  controller.changePassword,
+);
 
 export default router;

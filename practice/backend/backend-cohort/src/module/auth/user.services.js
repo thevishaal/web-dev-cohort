@@ -85,7 +85,7 @@ const login = async ({ email, password }) => {
   return { user: userObj, accessToken, refreshToken };
 };
 
-const refresh = async (token) => {
+const refreshToken = async (token) => {
   if (!token) throw ApiError.unauthorized("Token not found");
 
   const decoded = await verifyRefreshToken(token);
@@ -150,18 +150,30 @@ const logout = async (userId) => {
 };
 
 const getMe = async (userId) => {
-  const user = User.findById(userId);
-
+  const user = await User.findById(userId);
   return user;
+};
+
+const changePassword = async (userId, oldPassword, newPassword) => {
+  const user = await User.findById(userId).select("+password");
+
+  const isMatch = await user.comparePassword(oldPassword);
+
+  if (!isMatch) throw ApiError.badRequest("Old password is not matched.");
+
+  user.password = hashToken(newPassword);
+  user.save();
+  return;
 };
 
 export {
   register,
   login,
   verifyEmail,
-  refresh,
+  refreshToken,
   forgotPassword,
   resetPassword,
   logout,
   getMe,
+  changePassword,
 };

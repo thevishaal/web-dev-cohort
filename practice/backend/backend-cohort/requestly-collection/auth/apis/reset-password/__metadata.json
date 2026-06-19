@@ -1,0 +1,10 @@
+{
+  "$schema": "https://assets.requestly.com/local/v1.11.0/metadata.json",
+  "type": "api",
+  "entryType": "http",
+  "id": "f5b2fb8b-9080-4635-90a6-e76ec097c2c1",
+  "rank": "",
+  "url": "{{base_url}}api/auth/reset-password/81969ad5029ce2b84eb533d59431083f30c3c5a82d24b43b148c13802b0bfb50",
+  "method": "POST",
+  "contentType": "none"
+}

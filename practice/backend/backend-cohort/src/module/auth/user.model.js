@@ -40,12 +40,12 @@ const userSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-userSchema.pre("save", async function (password) {
+userSchema.pre("save", async function () {
   if (!this.isModified("password")) return;
-  this.password = await bcrypt.hash(password, 12);
+  this.password = await bcrypt.hash(this.password, 12);
 });
 
-userSchema.methods.comparePassword = async (clearPassword) => {
+userSchema.methods.comparePassword = function (clearPassword) {
   return bcrypt.compare(clearPassword, this.password);
 };
 

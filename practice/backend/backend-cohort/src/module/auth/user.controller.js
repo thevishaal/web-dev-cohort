@@ -33,8 +33,8 @@ const login = async (req, res) => {
   });
 };
 
-const refresh = async (req, res) => {
-  const tokens = await authService.refresh(req.headers.authorization);
+const refreshToken = async (req, res) => {
+  const tokens = await authService.refreshToken(req.headers.authorization);
   return ApiResponse.ok(res, "refresh tokens", tokens);
 };
 
@@ -47,7 +47,7 @@ const resetPassword = async (req, res) => {
   const token = req.params.token;
   const { password } = req.body;
   await authService.resetPassword(token, password);
-  return ApiResponse.ok(res, "Reset your password");
+  return ApiResponse.ok(res, "your password is reseted");
 };
 
 const logout = async (req, res) => {
@@ -58,17 +58,25 @@ const logout = async (req, res) => {
 };
 
 const getMe = async (req, res) => {
-  const user = authService.getMe(req.user.id);
+  const user = await authService.getMe(req.user.id);
   return ApiResponse.ok(res, "User profile", user);
+};
+
+const changePassword = async (req, res) => {
+  const userId = req.user.id;
+  const { oldPassword, newPassword } = req.body;
+  await authService.changePassword(userId, oldPassword, newPassword);
+  return ApiResponse.ok(res, "Password changed successfully");
 };
 
 export {
   register,
   login,
   verifyEmail,
-  refresh,
+  refreshToken,
   forgotPassword,
   resetPassword,
   logout,
   getMe,
+  changePassword,
 };

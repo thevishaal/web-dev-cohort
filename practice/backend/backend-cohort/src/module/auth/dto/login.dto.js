@@ -3,17 +3,8 @@ import BaseDto from "../../../common/dto/base.dto.js";
 
 class LoginDto extends BaseDto {
   static schema = Joi.object({
-    email: Joi.string()
-      .trim()
-      .lowercase()
-      .email()
-      .message("Email is required")
-      .required(),
-    password: Joi.string()
-      .trim()
-      .min(8)
-      .message("Password is required")
-      .required(),
+    email: Joi.string().trim().lowercase().email().required(),
+    password: Joi.string().trim().required(),
   });
 }
 
