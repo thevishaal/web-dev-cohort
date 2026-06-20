@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { signupPayloadModel } from "./models.js";
+import { signupPayloadModel, singinPayloadModel } from "./models.js";
 import { db } from "../../db/index.js";
 import { usersTable } from "../../db/schema.js";
 import { eq } from "drizzle-orm";
@@ -54,6 +54,41 @@ class AuthenticationController {
     return res
       .status(201)
       .json({ message: "user has been created successfully", data: user });
+  }
+
+  public async handleSignin(req: Request, res: Response) {
+    const validation = await singinPayloadModel.safeParseAsync(req.body);
+
+    if (validation.error) {
+      return res.status(400).json({
+        message: "body validation failed",
+        error: validation.error.issues,
+      });
+    }
+
+    const { email, password } = validation.data;
+
+    const [user] = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.email, email));
+
+    if (!user) return res.status(401).json({ message: "Invalid credentials" });
+
+    // if (!user.emailVerified)
+    //   return res.json({ message: "Email verified first" });
+
+    const hashPassword = crypto
+      .createHmac("sha256", user.salt!)
+      .update(password)
+      .digest("hex");
+
+    if (hashPassword !== user.password)
+      return res.status(401).json({ message: "Inavalid credentials" });
+
+    // TODO: token banao
+
+    return res.status(200).json({ message: "Signin Success", token: 1 });
   }
 }
 
