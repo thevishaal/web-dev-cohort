@@ -15,3 +15,8 @@ authRouter.post(
   "/sign-in",
   authenticationController.handleSignin.bind(authenticationController),
 );
+
+authRouter.get(
+  "/verify-email/:token",
+  authenticationController.handleVerifyEmail.bind(authenticationController),
+);

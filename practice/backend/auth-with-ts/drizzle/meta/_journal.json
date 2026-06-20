@@ -8,6 +8,20 @@
       "when": 1781873957016,
       "tag": "0000_rare_spectrum",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1781926201791,
+      "tag": "0001_fresh_clea",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1781926692882,
+      "tag": "0002_slim_karnak",
+      "breakpoints": true
     }
   ]
 }
