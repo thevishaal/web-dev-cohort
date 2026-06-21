@@ -1,12 +1,14 @@
 import express from "express";
 import type { Application, Request, Response } from "express";
 import { authRouter } from "./auth/routes.js";
+import { authenticationMiddleware } from "./middleware/auth-middleware.js";
 
 export function createApplicationServer(): Application {
   const app = express();
 
   // middleware
   app.use(express.json());
+  app.use(authenticationMiddleware());
 
   //routes
 

@@ -8,6 +8,7 @@ import {
   generateAccessToken,
   generateRefreshToken,
   generateResetToken,
+  type UserTokenPayload,
 } from "../utils/token.js";
 
 class AuthenticationController {
@@ -139,6 +140,25 @@ class AuthenticationController {
     return res
       .status(200)
       .json({ message: "User Verified", data: { id: user.id } });
+  }
+
+  public async handleGetMe(req: Request, res: Response) {
+    // @ts-ignore
+    const { id } = req.user! as UserTokenPayload;
+
+    const [user] = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.id, id));
+
+    return res.status(200).json({
+      message: "success",
+      data: {
+        firstName: user?.firstName,
+        lastName: user?.lastName,
+        email: user?.email,
+      },
+    });
   }
 }
 

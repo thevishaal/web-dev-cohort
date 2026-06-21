@@ -1,6 +1,7 @@
 import expres from "express";
 import type { Router } from "express";
 import AuthenticationController from "./controller.js";
+import { restrictToAuthenticatedUser } from "../middleware/auth-middleware.js";
 
 export const authRouter: Router = expres.Router();
 
@@ -19,4 +20,10 @@ authRouter.post(
 authRouter.get(
   "/verify-email/:token",
   authenticationController.handleVerifyEmail.bind(authenticationController),
+);
+
+authRouter.get(
+  "/me",
+  restrictToAuthenticatedUser(),
+  authenticationController.handleGetMe.bind(authenticationController),
 );

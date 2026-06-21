@@ -14,7 +14,7 @@ export const generateResetToken = () => {
 
 export const generateAccessToken = (payload: UserTokenPayload) => {
   return jwt.sign(payload, process.env.JWT_ACCESS_TOKEN_SECRET!, {
-    expiresIn: parseInt(process.env.JWT_ACCESS_TOKEN_EXPIRES_IN!) || "15m",
+    expiresIn: "15m",
   });
 };
 
@@ -27,7 +27,7 @@ export const verifyAccessToken = (token: string) => {
 
 export const generateRefreshToken = (payload: UserTokenPayload) => {
   return jwt.sign(payload, process.env.JWT_REFRESH_TOKEN_SECRET!, {
-    expiresIn: parseInt(process.env.JWT_REFRESH_TOKEN_EXPIRES_IN!) || "7d",
+    expiresIn: "7d",
   });
 };
 
