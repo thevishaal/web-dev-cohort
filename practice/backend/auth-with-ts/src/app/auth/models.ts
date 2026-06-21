@@ -11,3 +11,11 @@ export const singinPayloadModel = z.object({
   email: z.email(),
   password: z.string(),
 });
+
+export const forgetPasswordPayloadModel = z.object({
+  email: z.email(),
+});
+
+export const resetPasswordPayloadModel = z.object({
+  password: z.string().min(8),
+});

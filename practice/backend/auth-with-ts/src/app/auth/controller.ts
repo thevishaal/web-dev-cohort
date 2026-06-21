@@ -1,5 +1,10 @@
 import type { Request, Response } from "express";
-import { signupPayloadModel, singinPayloadModel } from "./models.js";
+import {
+  forgetPasswordPayloadModel,
+  resetPasswordPayloadModel,
+  signupPayloadModel,
+  singinPayloadModel,
+} from "./models.js";
 import { db } from "../../db/index.js";
 import { usersTable } from "../../db/schema.js";
 import { eq } from "drizzle-orm";
@@ -159,6 +164,86 @@ class AuthenticationController {
         email: user?.email,
       },
     });
+  }
+
+  public async handleForgetPassword(req: Request, res: Response) {
+    const validationResult = await forgetPasswordPayloadModel.safeParseAsync(
+      req.body,
+    );
+
+    if (validationResult.error) {
+      return res.status(400).json({
+        message: "body validation failed",
+        error: validationResult.error.issues,
+      });
+    }
+
+    const { email } = validationResult.data;
+
+    const [user] = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.email, email));
+
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
+
+    const { rawToken, hashToken } = generateResetToken();
+
+    await db
+      .update(usersTable)
+      .set({
+        resetToken: hashToken,
+        resetTokenExpiry: new Date(Date.now() + 10 * 60 * 60 * 1000),
+      })
+      .where(eq(usersTable.email, email));
+
+    // send to email
+    console.log("Raw Token:", rawToken);
+    return res.status(200).json({ message: "Reset Email sent" });
+  }
+
+  public async handleResetPassword(req: Request, res: Response) {
+    const token: string = String(req.params.token);
+    if (!token) {
+      return res.status(400).json({ message: "Token is missing" });
+    }
+
+    const validationResult = await resetPasswordPayloadModel.safeParseAsync(
+      req.body,
+    );
+
+    if (validationResult.error) {
+      return res.status(400).json({
+        message: "Body validation failed",
+        error: validationResult.error.issues,
+      });
+    }
+
+    const { password } = validationResult.data;
+
+    const [user] = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.resetToken, this.hashToken(token)));
+
+    if (!user) {
+      return res.json({ message: "User not found" });
+    }
+
+    const salt = crypto.randomBytes(32).toString("hex");
+    const hashPassword = crypto
+      .createHmac("sha256", salt)
+      .update(password)
+      .digest("hex");
+
+    await db
+      .update(usersTable)
+      .set({ password: hashPassword, resetToken: null, resetTokenExpiry: null })
+      .where(eq(usersTable.id, user.id));
+
+    return res.status(200).json({ message: "Password reset successfully" });
   }
 }
 
