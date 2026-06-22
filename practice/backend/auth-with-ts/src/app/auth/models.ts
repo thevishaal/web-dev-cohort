@@ -19,3 +19,8 @@ export const forgetPasswordPayloadModel = z.object({
 export const resetPasswordPayloadModel = z.object({
   password: z.string().min(8),
 });
+
+export const changePasswordPayloadModel = z.object({
+  oldPassword: z.string(),
+  newPassword: z.string().min(8),
+});

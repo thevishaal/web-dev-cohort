@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import {
+  changePasswordPayloadModel,
   forgetPasswordPayloadModel,
   resetPasswordPayloadModel,
   signupPayloadModel,
@@ -244,6 +245,54 @@ class AuthenticationController {
       .where(eq(usersTable.id, user.id));
 
     return res.status(200).json({ message: "Password reset successfully" });
+  }
+
+  public async handleChangePassword(req: Request, res: Response) {
+    // @ts-ignore
+    const { id } = req.user as UserTokenPayload;
+    const validationResult = await changePasswordPayloadModel.safeParseAsync(
+      req.body,
+    );
+
+    const [user] = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.id, id));
+
+    if (!user) return res.status(401).json({ message: "user not found" });
+
+    if (validationResult.error) {
+      return res.status(400).json({
+        message: "body validation failed",
+        errror: validationResult.error.issues,
+      });
+    }
+
+    const { oldPassword, newPassword } = validationResult.data;
+
+    const hashOldPassowrd = crypto
+      .createHmac("sha256", user.salt!)
+      .update(oldPassword)
+      .digest("hex");
+
+    if (hashOldPassowrd !== user.password) {
+      return res.json({
+        message: "Old password is not matched",
+      });
+    }
+
+    const salt = crypto.randomBytes(32).toString("hex");
+    const hashNewPassword = crypto
+      .createHmac("sha256", salt)
+      .update(newPassword)
+      .digest("hex");
+
+    await db
+      .update(usersTable)
+      .set({ password: hashNewPassword, salt: salt })
+      .where(eq(usersTable.id, user.id));
+
+    return res.status(200).json({ message: "Password change successfully" });
   }
 }
 

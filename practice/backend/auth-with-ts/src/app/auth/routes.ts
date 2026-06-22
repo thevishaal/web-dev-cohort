@@ -37,3 +37,9 @@ authRouter.post(
   "/reset-password/:token",
   authenticationController.handleResetPassword.bind(authenticationController),
 );
+
+authRouter.post(
+  "/change-password",
+  restrictToAuthenticatedUser(),
+  authenticationController.handleChangePassword.bind(authenticationController),
+);
