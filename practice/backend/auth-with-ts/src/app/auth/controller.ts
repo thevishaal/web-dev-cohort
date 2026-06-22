@@ -22,6 +22,14 @@ class AuthenticationController {
     return crypto.createHash("sha256").update(token).digest("hex");
   }
 
+  private salt() {
+    return crypto.randomBytes(32).toString("hex");
+  }
+
+  private hashPassword(password: string, salt: string) {
+    return crypto.createHmac("sha256", salt).update(password).digest("hex");
+  }
+
   public async handleSignup(req: Request, res: Response) {
     const validationResult = await signupPayloadModel.safeParseAsync(req.body);
 
@@ -44,11 +52,14 @@ class AuthenticationController {
         error: "conflict",
       });
 
-    const salt = crypto.randomBytes(32).toString("hex");
-    const hash = crypto
-      .createHmac("sha256", salt)
-      .update(password)
-      .digest("hex");
+    // const salt = crypto.randomBytes(32).toString("hex");
+    // const hash = crypto
+    //   .createHmac("sha256", salt)
+    //   .update(password)
+    //   .digest("hex");
+
+    const salt = this.salt();
+    const hashPassword = this.hashPassword(password, salt);
 
     const { rawToken, hashToken } = generateResetToken();
 
@@ -58,7 +69,7 @@ class AuthenticationController {
         firstName,
         lastName,
         email,
-        password: hash,
+        password: hashPassword,
         salt,
         verificationToken: hashToken,
       })
@@ -100,12 +111,14 @@ class AuthenticationController {
     if (!user.emailVerified)
       return res.json({ message: "Email verified first" });
 
-    const hashPassword = crypto
-      .createHmac("sha256", user.salt!)
-      .update(password)
-      .digest("hex");
+    // const hashPassword = crypto
+    //   .createHmac("sha256", user.salt!)
+    //   .update(password)
+    //   .digest("hex");
 
-    if (hashPassword !== user.password)
+    const hashPass = this.hashPassword(password, user.salt!);
+
+    if (hashPass !== user.password)
       return res.status(401).json({ message: "Inavalid credentials" });
 
     const accessToken = generateAccessToken({ id: user.id });
@@ -233,15 +246,21 @@ class AuthenticationController {
       return res.json({ message: "User not found" });
     }
 
-    const salt = crypto.randomBytes(32).toString("hex");
-    const hashPassword = crypto
-      .createHmac("sha256", salt)
-      .update(password)
-      .digest("hex");
-
+    // const salt = crypto.randomBytes(32).toString("hex");
+    // const hashPassword = crypto
+    //   .createHmac("sha256", salt)
+    //   .update(password)
+    //   .digest("hex");
+    const salt = this.salt();
+    const hashPass = this.hashPassword(password, salt);
     await db
       .update(usersTable)
-      .set({ password: hashPassword, resetToken: null, resetTokenExpiry: null })
+      .set({
+        password: hashPass,
+        salt,
+        resetToken: null,
+        resetTokenExpiry: null,
+      })
       .where(eq(usersTable.id, user.id));
 
     return res.status(200).json({ message: "Password reset successfully" });
@@ -270,10 +289,12 @@ class AuthenticationController {
 
     const { oldPassword, newPassword } = validationResult.data;
 
-    const hashOldPassowrd = crypto
-      .createHmac("sha256", user.salt!)
-      .update(oldPassword)
-      .digest("hex");
+    // const hashOldPassowrd = crypto
+    //   .createHmac("sha256", user.salt!)
+    //   .update(oldPassword)
+    //   .digest("hex");
+
+    const hashOldPassowrd = this.hashPassword(oldPassword, user.salt!);
 
     if (hashOldPassowrd !== user.password) {
       return res.json({
@@ -281,11 +302,14 @@ class AuthenticationController {
       });
     }
 
-    const salt = crypto.randomBytes(32).toString("hex");
-    const hashNewPassword = crypto
-      .createHmac("sha256", salt)
-      .update(newPassword)
-      .digest("hex");
+    // const salt = crypto.randomBytes(32).toString("hex");
+    // const hashNewPassword = crypto
+    //   .createHmac("sha256", salt)
+    //   .update(newPassword)
+    //   .digest("hex");
+
+    const salt = this.salt();
+    const hashNewPassword = this.hashPassword(newPassword, salt);
 
     await db
       .update(usersTable)
