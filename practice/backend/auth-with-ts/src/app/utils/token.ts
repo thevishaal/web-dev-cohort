@@ -1,6 +1,7 @@
 import "dotenv/config";
 import jwt from "jsonwebtoken";
 import crypto from "node:crypto";
+import { env } from "../../env.js";
 
 export interface UserTokenPayload {
   id: string;
@@ -13,24 +14,21 @@ export const generateResetToken = () => {
 };
 
 export const generateAccessToken = (payload: UserTokenPayload) => {
-  return jwt.sign(payload, process.env.JWT_ACCESS_TOKEN_SECRET!, {
+  return jwt.sign(payload, env.JWT_ACCESS_TOKEN_SECRET, {
     expiresIn: "15m",
   });
 };
 
 export const verifyAccessToken = (token: string) => {
-  return jwt.verify(
-    token,
-    process.env.JWT_ACCESS_TOKEN_SECRET!,
-  ) as UserTokenPayload;
+  return jwt.verify(token, env.JWT_ACCESS_TOKEN_SECRET) as UserTokenPayload;
 };
 
 export const generateRefreshToken = (payload: UserTokenPayload) => {
-  return jwt.sign(payload, process.env.JWT_REFRESH_TOKEN_SECRET!, {
+  return jwt.sign(payload, env.JWT_REFRESH_TOKEN_SECRET, {
     expiresIn: "7d",
   });
 };
 
 export const verifyRefreshToken = (token: string) => {
-  return jwt.verify(token, process.env.JWT_REFRESH_TOKEN_SECRET!);
+  return jwt.verify(token, env.JWT_REFRESH_TOKEN_SECRET);
 };
