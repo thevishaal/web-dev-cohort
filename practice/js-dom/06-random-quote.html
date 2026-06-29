@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="quote-card">
+      <h2>💬 Quote of the Day</h2>
+      <p id="quote"></p>
+      <h3 id="author"></h3>
+
+      <div class="info">
+        <span class="tag"></span>
+        <span class="length"></span>
+        <span class="date"></span>
+      </div>
+
+      <div class="buttons">
+        <button id="new-quote">New Quote</button>
+        <button id="copy">Copy</button>
+        <button id="share">Share</button>
+      </div>
+    </div>
+    <script>
+      // select all element
+      const quotePara = document.getElementById("quote");
+      const authorHeading = document.getElementById("author");
+      const tagSpan = document.getElementsByClassName("tag");
+      const lengthSpan = document.getElementsByClassName("length");
+      const dateSpan = document.getElementsByClassName("date");
+      const nextQuoteBtn = document.getElementById("new-quote");
+
+      // fetchData
+      async function fetchData() {
+        try {
+          const res = await fetch(
+            "https://api.freeapi.app/api/v1/public/quotes/quote/random",
+          );
+          const data = await res.json();
+          console.log(data);
+          return data.data;
+        } catch (error) {
+          throw new Error("Something went wrong!");
+        }
+      }
+
+      window.addEventListener("DOMContentLoaded", async () => {
+        const data = await fetchData();
+        quotePara.innerText = data.content;
+        authorHeading.innerText = data.author;
+      });
+
+      nextQuoteBtn.addEventListener("click", async () => {
+        const data = await fetchData();
+        quotePara.innerText = data.content;
+        authorHeading.innerText = data.author;
+      });
+    </script>
+  </body>
+</html>
