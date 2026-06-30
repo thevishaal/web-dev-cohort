@@ -3,60 +3,476 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Random Quote</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        min-height: 100vh;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        padding: 20px;
+
+        background: radial-gradient(circle at top, #ffffff, #eef2f7);
+
+        color: #111827;
+      }
+
+      /* ---------- Wrapper ---------- */
+
+      .app {
+        width: min(720px, 95%);
+      }
+
+      /* ---------- Card ---------- */
+
+      .content,
+      .skeleton {
+        width: 100%;
+
+        background: rgba(255, 255, 255, 0.82);
+
+        backdrop-filter: blur(18px);
+
+        border-radius: 28px;
+
+        padding: 45px;
+
+        border: 1px solid rgba(255, 255, 255, 0.7);
+
+        box-shadow:
+          0 25px 60px rgba(15, 23, 42, 0.08),
+          inset 0 1px rgba(255, 255, 255, 0.8);
+
+        transition: 0.35s;
+      }
+
+      .content:hover {
+        transform: translateY(-4px);
+
+        box-shadow: 0 35px 70px rgba(0, 0, 0, 0.08);
+      }
+
+      /* ---------- Typography ---------- */
+
+      .content h2 {
+        text-align: center;
+
+        font-size: 2rem;
+
+        margin-bottom: 35px;
+      }
+
+      #quote {
+        font-size: 1.55rem;
+
+        line-height: 1.9;
+
+        font-weight: 500;
+
+        color: #1f2937;
+
+        margin-bottom: 35px;
+      }
+
+      #author {
+        text-align: right;
+
+        color: #6b7280;
+
+        font-weight: 600;
+
+        margin-bottom: 30px;
+      }
+
+      /* ---------- Tags ---------- */
+
+      .info {
+        display: flex;
+
+        flex-wrap: wrap;
+
+        gap: 10px;
+
+        margin-bottom: 35px;
+      }
+
+      .info span {
+        background: #f4f4f5;
+
+        color: #555;
+
+        padding: 10px 15px;
+
+        border-radius: 999px;
+
+        font-size: 0.85rem;
+      }
+
+      /* ---------- Buttons ---------- */
+
+      .buttons {
+        display: flex;
+
+        gap: 12px;
+      }
+
+      button {
+        flex: 1;
+
+        border: none;
+
+        cursor: pointer;
+
+        border-radius: 14px;
+
+        padding: 14px;
+
+        font-size: 0.95rem;
+
+        font-weight: 600;
+
+        transition: 0.25s;
+      }
+
+      #new-quote {
+        background: #111827;
+
+        color: #fff;
+      }
+
+      #new-quote:hover {
+        background: #000;
+      }
+
+      #share {
+        background: #f3f4f6;
+
+        color: #111827;
+      }
+
+      #copy {
+        position: relative;
+
+        height: 50px;
+
+        border-radius: 14px;
+
+        background: #f3f4f6;
+
+        overflow: hidden;
+
+        font-size: 17px;
+        font-weight: 600;
+
+        transition: 0.3s;
+      }
+
+      #copy .text,
+      #copy .tick {
+        position: absolute;
+
+        inset: 0;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        transition: 0.25s ease;
+      }
+
+      #copy .tick {
+        color: #16a34a;
+
+        transform: translateY(100%);
+      }
+
+      #copy.copied .text {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+
+      #copy.copied .tick {
+        transform: translateY(0);
+      }
+
+      #copy:hover,
+      #share:hover {
+        background: #e5e7eb;
+      }
+
+      button:active {
+        transform: scale(0.97);
+      }
+
+      /* ---------- Skeleton ---------- */
+
+      .skeleton {
+        display: none;
+      }
+
+      .app.loading .content {
+        display: none;
+      }
+
+      .app.loading .skeleton {
+        display: block;
+      }
+
+      .skeleton-box {
+        position: relative;
+
+        overflow: hidden;
+
+        background: #ececec;
+
+        border-radius: 10px;
+      }
+
+      .skeleton-box::after {
+        content: "";
+
+        position: absolute;
+
+        inset: 0;
+
+        transform: translateX(-100%);
+
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.9),
+          transparent
+        );
+
+        animation: shimmer 1.1s infinite linear;
+      }
+
+      @keyframes shimmer {
+        100% {
+          transform: translateX(100%);
+        }
+      }
+
+      /* ---------- Skeleton Sizes ---------- */
+
+      .sk-title {
+        width: 45%;
+
+        height: 34px;
+
+        margin: 0 auto 35px;
+      }
+
+      .sk-line {
+        height: 18px;
+
+        margin-bottom: 16px;
+      }
+
+      .sk-line:nth-child(3) {
+        width: 95%;
+      }
+
+      .sk-line:nth-child(4) {
+        width: 80%;
+      }
+
+      .sk-author {
+        width: 35%;
+
+        height: 18px;
+
+        margin: 28px 0 35px auto;
+      }
+
+      .sk-tags {
+        display: flex;
+
+        gap: 10px;
+
+        margin-bottom: 35px;
+      }
+
+      .sk-pill {
+        width: 90px;
+
+        height: 36px;
+      }
+
+      .sk-buttons {
+        display: flex;
+
+        gap: 12px;
+      }
+
+      .sk-btn {
+        flex: 1;
+
+        height: 50px;
+      }
+
+      /* ---------- Animation ---------- */
+
+      .content {
+        animation: fade 0.4s ease;
+      }
+
+      @keyframes fade {
+        from {
+          opacity: 0;
+
+          transform: translateY(20px);
+        }
+
+        to {
+          opacity: 1;
+
+          transform: translateY(0);
+        }
+      }
+
+      /* ---------- Responsive ---------- */
+
+      @media (max-width: 650px) {
+        .content,
+        .skeleton {
+          padding: 28px;
+        }
+
+        .content h2 {
+          font-size: 1.6rem;
+        }
+
+        #quote {
+          font-size: 1.2rem;
+        }
+
+        .buttons {
+          flex-direction: column;
+        }
+      }
+    </style>
   </head>
   <body>
-    <div class="quote-card">
-      <h2>💬 Quote of the Day</h2>
-      <p id="quote"></p>
-      <h3 id="author"></h3>
+    <div class="app">
+      <div class="skeleton">
+        <div class="skeleton-box sk-title"></div>
 
-      <div class="info">
-        <span class="tag"></span>
-        <span class="length"></span>
-        <span class="date"></span>
+        <div class="skeleton-box sk-line"></div>
+        <div class="skeleton-box sk-line"></div>
+        <div class="skeleton-box sk-line"></div>
+
+        <div class="skeleton-box sk-author"></div>
+
+        <div class="sk-tags">
+          <div class="skeleton-box sk-pill"></div>
+          <div class="skeleton-box sk-pill"></div>
+          <div class="skeleton-box sk-pill"></div>
+        </div>
+
+        <div class="sk-buttons">
+          <div class="skeleton-box sk-btn"></div>
+          <div class="skeleton-box sk-btn"></div>
+          <div class="skeleton-box sk-btn"></div>
+        </div>
       </div>
 
-      <div class="buttons">
-        <button id="new-quote">New Quote</button>
-        <button id="copy">Copy</button>
-        <button id="share">Share</button>
+      <div class="content">
+        <h2>💬 Quote of the Day</h2>
+
+        <p id="quote"></p>
+        <h3 id="author"></h3>
+
+        <div class="info">
+          <span class="tag"></span>
+          <span class="length"></span>
+          <span class="date"></span>
+        </div>
+
+        <div class="buttons">
+          <button id="new-quote">New Quote</button>
+          <button id="copy">
+            <span class="text">Copy</span>
+            <span class="tick">✓ Copied</span>
+          </button>
+          <button id="share">Share</button>
+        </div>
       </div>
     </div>
     <script>
-      // select all element
+      const card = document.querySelector(".app");
       const quotePara = document.getElementById("quote");
       const authorHeading = document.getElementById("author");
-      const tagSpan = document.getElementsByClassName("tag");
-      const lengthSpan = document.getElementsByClassName("length");
-      const dateSpan = document.getElementsByClassName("date");
-      const nextQuoteBtn = document.getElementById("new-quote");
+      const tagSpan = document.querySelector(".tag");
+      const lengthSpan = document.querySelector(".length");
+      const dateSpan = document.querySelector(".date");
+      const quoteBtn = document.getElementById("new-quote");
+      const copyBtn = document.getElementById("copy");
+      const shareBtn = document.getElementById("share");
 
-      // fetchData
-      async function fetchData() {
+      async function init() {
+        card.classList.add("loading");
+
+        try {
+          const quote = await fetchQuote();
+
+          quotePara.textContent = quote.content;
+          authorHeading.textContent = `- ${quote.author}`;
+          tagSpan.textContent = quote.tags?.[0] || "No tag";
+          lengthSpan.textContent = quote.length + " characters";
+          dateSpan.textContent = quote.dateAdded;
+        } finally {
+          card.classList.remove("loading");
+        }
+      }
+
+      async function fetchQuote() {
         try {
           const res = await fetch(
             "https://api.freeapi.app/api/v1/public/quotes/quote/random",
           );
-          const data = await res.json();
-          console.log(data);
-          return data.data;
+          const quoteData = await res.json();
+          console.log(quoteData.data);
+          return quoteData.data;
         } catch (error) {
-          throw new Error("Something went wrong!");
+          console.log(error);
         }
       }
 
-      window.addEventListener("DOMContentLoaded", async () => {
-        const data = await fetchData();
-        quotePara.innerText = data.content;
-        authorHeading.innerText = data.author;
+      quoteBtn.addEventListener("click", init);
+
+      copyBtn.addEventListener("click", async () => {
+        await navigator.clipboard.writeText(
+          `${quotePara.innerText}\n\n${authorHeading.innerText}`,
+        );
+
+        copyBtn.classList.add("copied");
+
+        setTimeout(() => {
+          copyBtn.classList.remove("copied");
+        }, 2000);
       });
 
-      nextQuoteBtn.addEventListener("click", async () => {
-        const data = await fetchData();
-        quotePara.innerText = data.content;
-        authorHeading.innerText = data.author;
+      shareBtn.addEventListener("click", () => {
+        const text = `${quotePara.textContent} ${authorHeading.textContent}`;
+
+        window.open(
+          `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`,
+        );
       });
+
+      init();
     </script>
   </body>
 </html>
