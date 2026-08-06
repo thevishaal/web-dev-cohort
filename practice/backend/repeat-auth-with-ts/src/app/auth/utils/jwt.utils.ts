@@ -2,7 +2,7 @@ import jwt, { type SignOptions } from "jsonwebtoken";
 import crypto from "node:crypto";
 import { env } from "../../../env.js";
 
-interface UserTokenPayload {
+export interface UserTokenPayload {
   id: string;
   email: string;
 }

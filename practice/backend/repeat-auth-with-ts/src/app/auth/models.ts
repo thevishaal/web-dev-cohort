@@ -8,3 +8,10 @@ export const signUpPayloadModel = z.object({
 });
 
 export type SignUpPayloadType = z.infer<typeof signUpPayloadModel>;
+
+export const signInPayloadModel = z.object({
+  email: z.email(),
+  password: z.string(),
+});
+
+export type SignInPayloadType = z.infer<typeof signInPayloadModel>;
