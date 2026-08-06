@@ -1,9 +1,10 @@
 import http from "node:http";
 import { env } from "./env.js";
+import { createApplication } from "./app/index.js";
 
 async function main() {
   try {
-    const server = http.createServer();
+    const server = http.createServer(createApplication());
 
     const PORT: number = env.PORT ? +env.PORT : 8080;
 
