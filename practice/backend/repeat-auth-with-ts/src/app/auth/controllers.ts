@@ -12,5 +12,5 @@ export const signUp = async (req: Request, res: Response) => {
     });
   }
 
-  await authService.signUp(validationResult.data, req, res);
+  return await authService.signUp(validationResult.data, req, res);
 };

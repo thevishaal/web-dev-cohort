@@ -4,6 +4,7 @@ import { usersTable } from "../../common/db/schema.js";
 import type { SignUpPayloadType } from "./models.js";
 import type { Request, Response } from "express";
 import crypto from "node:crypto";
+import { generateResetToken } from "./utils/jwt.utils.js";
 
 export const signUp = async (
   data: SignUpPayloadType,
@@ -30,7 +31,10 @@ export const signUp = async (
     .update(password)
     .digest("hex");
 
-  // Todo: create token
+  const { rawToken, hashToken } = generateResetToken();
+
+  // TODO: send email to verify
+  console.log("Raw token:", rawToken);
 
   const [user] = await db
     .insert(usersTable)
@@ -40,7 +44,7 @@ export const signUp = async (
       email,
       password: hashPassword,
       salt,
-      verificationToken: "afdajs",
+      verificationToken: hashToken,
     })
     .returning({
       id: usersTable.id,
