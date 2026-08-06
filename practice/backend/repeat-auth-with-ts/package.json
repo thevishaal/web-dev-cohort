@@ -1,0 +1,19 @@
+{
+  "name": "repeat-auth-with-ts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node dist/index",
+    "build": "tsc -p .",
+    "dev": "tsc-watch --onSuccess \"node dist/index\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "tsc-watch": "^7.2.1",
+    "typescript": "^7.0.2"
+  }
+}
