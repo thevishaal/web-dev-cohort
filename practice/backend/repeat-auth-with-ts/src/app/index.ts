@@ -2,6 +2,7 @@ import express from "express";
 import type { Application, Request, Response } from "express";
 import authRouter from "./auth/routes.js";
 import { authenticationMiddleware } from "./auth/utils/auth-middleware.js";
+import studentRouter from "./sms/routes.js";
 
 export function createApplication(): Application {
   const app = express();
@@ -16,6 +17,7 @@ export function createApplication(): Application {
   });
 
   app.use("/auth", authRouter);
+  app.use("/students", studentRouter);
 
   return app;
 }

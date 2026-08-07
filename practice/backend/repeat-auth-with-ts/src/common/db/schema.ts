@@ -27,3 +27,16 @@ export const usersTable = pgTable("users", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").$onUpdate(() => new Date()),
 });
+
+export const studentsTable = pgTable("students", {
+  id: uuid("id").primaryKey().defaultRandom(),
+
+  name: varchar("name", { length: 79 }).notNull(),
+  email: varchar("email", { length: 322 }).notNull().unique(),
+
+  age: varchar("age").notNull(),
+  class: varchar("class").notNull(),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").$onUpdate(() => new Date()),
+});
