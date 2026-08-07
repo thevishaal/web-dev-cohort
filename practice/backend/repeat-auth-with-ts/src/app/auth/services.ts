@@ -143,3 +143,22 @@ export const signIn = async (
     },
   });
 };
+
+export const me = async (req: Request, res: Response) => {
+  // @ts-ignore
+  const { id, email } = req.user! as UserTokenPayload;
+
+  const [user] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.id, id));
+
+  return res.json({
+    data: {
+      id,
+      firstName: user?.firstName,
+      lastName: user?.lastName,
+      email: user?.email,
+    },
+  });
+};

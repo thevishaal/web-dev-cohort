@@ -27,3 +27,7 @@ export const signIn = async (req: Request, res: Response) => {
 
   return await authService.signIn(validationResult.data, req, res);
 };
+
+export const me = async (req: Request, res: Response) => {
+  return await authService.me(req, res);
+};
