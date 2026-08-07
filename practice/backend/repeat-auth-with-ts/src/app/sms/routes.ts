@@ -10,7 +10,7 @@ const router = express.Router();
 router.get("/", controller.handleAllStudents.bind(controller));
 router.post("/", controller.handleStudents.bind(controller));
 
-// router.get("/:id");
+router.get("/:id", controller.handleStudentById.bind(controller));
 // router.put("/:id");
 
 // router.delete("/:id");

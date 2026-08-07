@@ -3,6 +3,7 @@ import { db } from "../../common/db/index.js";
 import { studentsTable } from "../../common/db/schema.js";
 import { studentsPayload } from "./models.js";
 import { eq } from "drizzle-orm";
+import { json } from "zod";
 
 export class studentsController {
   public async handleAllStudents(req: Request, res: Response) {
@@ -54,5 +55,35 @@ export class studentsController {
     return res
       .status(201)
       .json({ message: "Student created successfully.", data: student });
+  }
+
+  public async handleStudentById(req: Request<{ id: string }>, res: Response) {
+    try {
+      const id = req.params.id;
+
+      if (!id) {
+        return res
+          .status(400)
+          .json({ message: "Id is required!", error: "Id is missing." });
+      }
+
+      const [student] = await db
+        .select()
+        .from(studentsTable)
+        .where(eq(studentsTable.id, id));
+
+      if (!student) {
+        return res
+          .status(404)
+          .json({ message: "Student not found", data: null });
+      }
+
+      return res.status(200).json({
+        message: null,
+        data: student,
+      });
+    } catch (error) {
+      return res.status(500).json({ message: "Internal Server Error", error });
+    }
   }
 }
