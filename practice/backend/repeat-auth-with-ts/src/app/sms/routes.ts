@@ -8,7 +8,7 @@ const router = express.Router();
 // routes
 
 router.get("/", controller.handleAllStudents.bind(controller));
-// router.post("/");
+router.post("/", controller.handleStudents.bind(controller));
 
 // router.get("/:id");
 // router.put("/:id");
