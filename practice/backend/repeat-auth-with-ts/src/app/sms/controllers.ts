@@ -3,7 +3,6 @@ import { db } from "../../common/db/index.js";
 import { studentsTable } from "../../common/db/schema.js";
 import { studentsPayload } from "./models.js";
 import { eq } from "drizzle-orm";
-import { json } from "zod";
 
 export class studentsController {
   public async handleAllStudents(req: Request, res: Response) {
@@ -84,6 +83,33 @@ export class studentsController {
       });
     } catch (error) {
       return res.status(500).json({ message: "Internal Server Error", error });
+    }
+  }
+
+  public async handleDeleteStudent(
+    req: Request<{ id: string }>,
+    res: Response,
+  ) {
+    try {
+      const id = req.params.id;
+
+      if (!id) {
+        return res
+          .status(400)
+          .json({ message: "Id is required!", error: "Id is missing." });
+      }
+
+      const deletedStudent = await db
+        .delete(studentsTable)
+        .where(eq(studentsTable.id, id))
+        .returning();
+
+      if (deletedStudent.length === 0) {
+        return res.status(404).json({ message: "Student not found" });
+      }
+      return res.status(204).send();
+    } catch (error) {
+      return res.status(500).json(error);
     }
   }
 }

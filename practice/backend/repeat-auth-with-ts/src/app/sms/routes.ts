@@ -13,6 +13,6 @@ router.post("/", controller.handleStudents.bind(controller));
 router.get("/:id", controller.handleStudentById.bind(controller));
 // router.put("/:id");
 
-// router.delete("/:id");
+router.delete("/:id", controller.handleDeleteStudent.bind(controller));
 
 export default router;
