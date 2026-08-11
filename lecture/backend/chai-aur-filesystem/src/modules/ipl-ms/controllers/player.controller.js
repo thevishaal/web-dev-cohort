@@ -31,10 +31,24 @@ const deletePlayer = async (req, res) => {
   ApiResponse.ok(res, "Player deleted successfully");
 };
 
+const transferPlayer = async (req, res) => {
+  const player = await playerService.transferPlayer(req.params.id, req.body);
+
+  ApiResponse.ok(res, "Player transfer successfully", player);
+};
+
+const updatePlayerRole = async (req, res) => {
+  const player = await playerService.updatePlayerRole(req.params.id, req.body);
+
+  ApiResponse.ok(res, "Player Role updated successfully", player);
+};
+
 export {
   createPlayer,
   getAllPlayers,
   getPlayerById,
   updatePlayerById,
   deletePlayer,
+  transferPlayer,
+  updatePlayerRole,
 };

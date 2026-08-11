@@ -18,4 +18,10 @@ router.put("/:id", controller.updatePlayerById);
 // delete player by id
 router.delete("/:id", controller.deletePlayer);
 
+// transfer player
+router.post("/:id", controller.transferPlayer);
+
+// update role player by id
+router.put("/role/:id", controller.updatePlayerRole);
+
 export default router;

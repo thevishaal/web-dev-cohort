@@ -36,22 +36,16 @@ const getPlayerById = async (playerId) => {
   return player;
 };
 
-const updatePlayerById = async (playerId, { name, role, teamId }) => {
-  const player = await Player.findById(playerId);
+const updatePlayerById = async (playerId, { name, role }) => {
+  const player = await Player.findByIdAndUpdate(
+    playerId,
+    { name, role },
+    { new: true, runValidators: true },
+  );
 
   if (!player) {
     throw ApiError.notFound("Player not found");
   }
-
-  const team = await Team.findById(teamId);
-
-  if (!team) {
-    throw ApiError.notFound("Team not found");
-  }
-
-  await player
-    .updateOne({ name, role, teamId }, { new: true, runValidators: true })
-    .populate("teamId", "name ownerId");
 
   return player;
 };
@@ -64,7 +58,7 @@ const deletePlayer = async (playerId) => {
   }
 };
 
-const transferPlayer = async (playerId, newTeamId) => {
+const transferPlayer = async (playerId, { newTeamId }) => {
   const team = await Team.findById(newTeamId);
 
   if (!team) {
@@ -84,7 +78,7 @@ const transferPlayer = async (playerId, newTeamId) => {
   return player;
 };
 
-const updatePlayerRole = async (playerId, role) => {
+const updatePlayerRole = async (playerId, { role }) => {
   const player = await Player.findByIdAndUpdate(
     playerId,
     { role },
