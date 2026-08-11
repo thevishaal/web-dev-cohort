@@ -6,6 +6,7 @@ import authRoute from "./modules/auth/auth.routes.js";
 import ApiError from "./common/utils/api-error.js";
 import errorHandler from "./common/middleware/error.middleware.js";
 import ownerRoutes from "./modules/ipl-ms/routes/owner.routes.js";
+import teamRoutes from "./modules/ipl-ms/routes/team.routes.js";
 
 const app = express();
 app.use(express.json());
@@ -20,6 +21,7 @@ app.get("/health", (req, res) => {
 
 app.use("/api/auth", authRoute);
 app.use("/api/owners", ownerRoutes);
+app.use("/api/teams", teamRoutes);
 
 app.all("{*path}", (req, res) => {
   throw ApiError.notFound(`Route ${req.originalUrl} not found`);

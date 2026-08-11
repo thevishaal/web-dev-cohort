@@ -15,7 +15,6 @@ const ownerSchema = new mongoose.Schema(
       trim: true,
       maxlength: 322,
       unique: true,
-      default: false,
     },
     company: {
       type: String,
