@@ -10,6 +10,7 @@ import teamRoutes from "./modules/ipl-ms/routes/team.routes.js";
 import playerRoutes from "./modules/ipl-ms/routes/player.routes.js";
 import sponsorRoutes from "./modules/ipl-ms/routes/sponsor.routes.js";
 import broadcasterRoutes from "./modules/ipl-ms/routes/broadcaster.routes.js";
+import teamSponsorRoutes from "./modules/ipl-ms/routes/team-sponsor.routes.js";
 
 const app = express();
 app.use(express.json());
@@ -28,6 +29,7 @@ app.use("/api/teams", teamRoutes);
 app.use("/api/players", playerRoutes);
 app.use("/api/sponsors", sponsorRoutes);
 app.use("/api/broadcasters", broadcasterRoutes);
+app.use("/api/team-sponsor", teamSponsorRoutes);
 
 app.all("{*path}", (req, res) => {
   throw ApiError.notFound(`Route ${req.originalUrl} not found`);
