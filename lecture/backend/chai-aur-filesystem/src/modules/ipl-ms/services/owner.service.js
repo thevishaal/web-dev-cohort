@@ -48,7 +48,6 @@ const deleteOwner = async (id) => {
   if (!owner) {
     throw ApiError.notFound("Owner not found");
   }
-  return owner;
 };
 
 export { createOwner, getAllOwners, getOwnerById, updateOwner, deleteOwner };

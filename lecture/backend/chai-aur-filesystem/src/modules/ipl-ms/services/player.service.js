@@ -46,8 +46,6 @@ const updatePlayerById = async (playerId, { name, role }) => {
   if (!player) {
     throw ApiError.notFound("Player not found");
   }
-
-  return player;
 };
 
 const deletePlayer = async (playerId) => {
