@@ -1,12 +1,12 @@
 import "dotenv/config";
 import http from "node:http";
 import createApplication from "./src/app.js";
-import connecDB from "./src/common/config/db.js";
+import connectDB from "./src/common/config/db.js";
 
 const start = async () => {
   const PORT = process.env.PORT || 5000;
 
-  await connecDB();
+  await connectDB();
 
   const server = http.createServer(createApplication());
 
