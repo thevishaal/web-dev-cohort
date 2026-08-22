@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CheckBoxes</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        font-family: system-ui, sans-serif;
+        background: #f5f5f5;
+        color: #171717;
+      }
+
+      h1 {
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+      }
+
+      #container {
+        max-width: 90vw;
+        min-height: 50vh;
+        padding: 2rem;
+        display: grid;
+        grid-template-columns: repeat(10, 1fr);
+        gap: 0.75rem;
+        background: #fff;
+        border: 1px solid #e5e5e5;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgb(0 0 0 / 6%);
+      }
+
+      input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: #171717;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <h1>CheckBoxes</h1>
+      <div id="container"></div>
+    </div>
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+    <script>
+      const socket = io();
+      const container = document.getElementById("container");
+      const CHECKBOXES_SIZE = 100;
+
+      socket.on("server:checkbox:change", (data) => {
+        console.log(`Socket Server Event `, data);
+        const { index, checked } = data;
+
+        const input = document.getElementById(`checkbox-${index}`);
+        if (input) {
+          input.checked = checked;
+        }
+      });
+
+      window.addEventListener("load", async () => {
+        const response = await fetch("/checkboxes", { method: "GET" });
+        const data = await response.json();
+
+        if (data && data.checkboxes) {
+          data.checkboxes.forEach((checked, index) => {
+            const input = document.createElement("input");
+            input.type = "checkbox";
+            input.id = `checkbox-${index}`;
+            input.checked = checked;
+
+            input.addEventListener("change", (event) => {
+              const checked = event.target.checked;
+              console.log("Checkbox:", { index, checked });
+              socket.emit("client:checkbox:change", { index, checked });
+            });
+            container.appendChild(input);
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
