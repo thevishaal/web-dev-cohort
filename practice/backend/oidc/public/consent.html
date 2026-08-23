@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign in with OIDC-AUTH</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        color-scheme: dark;
+        --bg: #09090b;
+        --surface: #111113;
+        --surface-hover: #18181b;
+        --border: #27272a;
+        --border-hover: #3f3f46;
+        --text: #f4f4f5;
+        --muted: #a1a1aa;
+        --subtle: #71717a;
+        --accent: #8b5cf6;
+        --accent-light: #a78bfa;
+      }
+
+      body {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        background:
+          radial-gradient(
+            circle at 50% 0%,
+            rgba(139, 92, 246, 0.1),
+            transparent 40%
+          ),
+          var(--bg);
+        color: var(--text);
+        font-family:
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+      }
+
+      .page {
+        width: 100%;
+        max-width: 520px;
+      }
+
+      /* Main card */
+      .card {
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: var(--surface);
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.4);
+      }
+
+      /* Topbar inside card */
+      .topbar {
+        height: 58px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0 22px;
+        border-bottom: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.015);
+      }
+
+      .logo {
+        width: 28px;
+        height: 28px;
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+        border-radius: 8px;
+        background: var(--accent);
+        color: #fff;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .topbar-title {
+        color: var(--text);
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      /* Card content */
+      .card-content {
+        padding: 32px;
+      }
+
+      .heading {
+        margin-bottom: 10px;
+        color: var(--text);
+        font-size: 32px;
+        line-height: 1.15;
+        font-weight: 500;
+        letter-spacing: -0.035em;
+      }
+
+      .subtitle {
+        margin-bottom: 32px;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.6;
+      }
+
+      .client-name {
+        color: var(--accent-light);
+        font-weight: 500;
+      }
+
+      /* Account */
+      .account {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        width: 100%;
+        padding: 15px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: #0d0d0f;
+        color: var(--text);
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+        transition:
+          background 0.2s ease,
+          border-color 0.2s ease,
+          transform 0.2s ease;
+      }
+
+      .account:hover {
+        background: var(--surface-hover);
+        border-color: var(--border-hover);
+        transform: translateY(-1px);
+      }
+
+      .avatar {
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+        border-radius: 50%;
+        background: #27272a;
+        color: var(--accent-light);
+        font-size: 15px;
+        font-weight: 600;
+      }
+
+      .account-info {
+        min-width: 0;
+      }
+
+      .account-title {
+        margin-bottom: 3px;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .account-email {
+        overflow: hidden;
+        color: var(--muted);
+        font-size: 13px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      /* Another account */
+      .another-account {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        width: 100%;
+        margin-top: 10px;
+        padding: 15px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: transparent;
+        color: var(--text);
+        font: inherit;
+        font-size: 14px;
+        text-align: left;
+        cursor: pointer;
+        transition:
+          background 0.2s ease,
+          border-color 0.2s ease;
+      }
+
+      .another-account:hover {
+        background: var(--surface-hover);
+        border-color: var(--border-hover);
+      }
+
+      .account-icon {
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+        border: 1px solid var(--border);
+        border-radius: 50%;
+        color: var(--muted);
+        font-size: 17px;
+      }
+
+      /* Legal */
+      .legal {
+        margin-top: 30px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.7;
+      }
+
+      .legal a {
+        color: var(--accent-light);
+        text-decoration: none;
+      }
+
+      .legal a:hover {
+        text-decoration: underline;
+      }
+
+      /* Footer */
+      .footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 28px;
+        color: var(--subtle);
+        font-size: 11px;
+      }
+
+      .language {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .chevron {
+        color: var(--subtle);
+        font-size: 8px;
+      }
+
+      .footer-links {
+        display: flex;
+        gap: 18px;
+      }
+
+      .footer a {
+        color: var(--muted);
+        text-decoration: none;
+      }
+
+      .footer a:hover {
+        color: var(--text);
+      }
+
+      /* Mobile */
+      @media (max-width: 520px) {
+        body {
+          align-items: flex-start;
+          padding: 16px;
+          padding-top: 30px;
+        }
+
+        .card {
+          border-radius: 14px;
+        }
+
+        .card-content {
+          padding: 24px;
+        }
+
+        .heading {
+          font-size: 28px;
+        }
+
+        .footer {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 20px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="page" id="page">
+      <section class="card" id="card">
+        <!-- Topbar -->
+        <header class="topbar" id="topbar">
+          <div class="logo" id="logo">O</div>
+
+          <div class="topbar-title" id="topbarTitle">
+            Sign in with OIDC-AUTH
+          </div>
+        </header>
+
+        <!-- Card Content -->
+        <div class="card-content" id="cardContent">
+          <h1 class="heading" id="heading">Choose an account</h1>
+
+          <p class="subtitle" id="subtitle">
+            to continue to
+            <span class="client-name" id="clientName"> ${client_name} </span>
+          </p>
+
+          <!-- Existing account -->
+          <button class="account" id="accountButton" type="button">
+            <div class="avatar" id="avatar">U</div>
+
+            <div class="account-info" id="accountInfo">
+              <div class="account-title" id="accountTitle">
+                Continue with your account
+              </div>
+
+              <div class="account-email" id="accountEmail">
+                Select your OIDC account
+              </div>
+            </div>
+          </button>
+
+          <!-- Another account -->
+          <button
+            class="another-account"
+            id="anotherAccountButton"
+            type="button"
+          >
+            <div class="account-icon" id="accountIcon">+</div>
+
+            <span id="anotherAccountText"> Use another account </span>
+          </button>
+
+          <!-- Legal -->
+          <p class="legal" id="legalText">
+            Before using this app, you can review
+            <a href="#" id="privacyLink"> Privacy Policy </a>
+            and
+            <a href="#" id="termsLink"> Terms of Service </a>.
+          </p>
+
+          <!-- Footer -->
+          <footer class="footer" id="footer">
+            <div class="language" id="language">
+              English (United States)
+
+              <span class="chevron" id="languageChevron"> ▼ </span>
+            </div>
+
+            <nav class="footer-links" id="footerLinks">
+              <a href="#" id="helpLink">Help</a>
+              <a href="#" id="footerPrivacyLink">Privacy</a>
+              <a href="#" id="footerTermsLink">Terms</a>
+            </nav>
+          </footer>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      // Body
+      const body = document.body;
+
+      // Main
+      const page = document.querySelector("#page");
+      const card = document.querySelector("#card");
+      const cardContent = document.querySelector("#cardContent");
+
+      // Topbar
+      const topbar = document.querySelector("#topbar");
+      const logo = document.querySelector("#logo");
+      const topbarTitle = document.querySelector("#topbarTitle");
+
+      // Main content
+      const heading = document.querySelector("#heading");
+      const subtitle = document.querySelector("#subtitle");
+      const clientName = document.querySelector("#clientName");
+
+      // Account
+      const accountButton = document.querySelector("#accountButton");
+      const avatar = document.querySelector("#avatar");
+      const accountInfo = document.querySelector("#accountInfo");
+      const accountTitle = document.querySelector("#accountTitle");
+      const accountEmail = document.querySelector("#accountEmail");
+
+      // Another account
+      const anotherAccountButton = document.querySelector(
+        "#anotherAccountButton",
+      );
+      const accountIcon = document.querySelector("#accountIcon");
+      const anotherAccountText = document.querySelector("#anotherAccountText");
+
+      // Legal
+      const legalText = document.querySelector("#legalText");
+      const privacyLink = document.querySelector("#privacyLink");
+      const termsLink = document.querySelector("#termsLink");
+
+      // Footer
+      const footer = document.querySelector("#footer");
+      const language = document.querySelector("#language");
+      const languageChevron = document.querySelector("#languageChevron");
+      const footerLinks = document.querySelector("#footerLinks");
+      const helpLink = document.querySelector("#helpLink");
+      const footerPrivacyLink = document.querySelector("#footerPrivacyLink");
+      const footerTermsLink = document.querySelector("#footerTermsLink");
+    </script>
+  </body>
+</html>
